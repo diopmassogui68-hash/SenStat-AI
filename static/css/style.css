@@ -1,141 +1,236 @@
 /* 
- * SenStat AI - Styles Personnalisés 
+ * SenStat AI - Styles Premium & UX Avancée
  * Auteur: Sanor Mangane (Habillage & UX)
  */
 
  :root {
-    --bg-color: #f8f9fa;
-    --panel-bg: #ffffff;
-    --text-color: #212529;
-    --border-color: #dee2e6;
-    --chat-bot-bg: rgba(13, 110, 253, 0.1);
-    --chat-user-bg: #f1f3f5;
+    /* Thème Clair - Premium */
+    --bg-color: #f3f5f8;
+    --panel-bg: rgba(255, 255, 255, 0.85);
+    --text-color: #2b3035;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --chat-bot-bg: linear-gradient(135deg, #ffffff 0%, #f1f5ff 100%);
+    --chat-user-bg: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+    --chat-user-text: #ffffff;
     --text-muted: #6c757d;
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.4);
+    --accent-glow: 0 0 15px rgba(13, 110, 253, 0.3);
 }
 
 [data-bs-theme="dark"] {
-    --bg-color: #212529;
-    --panel-bg: #2c3034;
-    --text-color: #f8f9fa;
-    --border-color: #495057;
-    --chat-bot-bg: rgba(13, 110, 253, 0.2);
-    --chat-user-bg: #343a40;
+    /* Thème Sombre - Premium & Sleek */
+    --bg-color: #0f1115;
+    --panel-bg: rgba(25, 28, 36, 0.75);
+    --text-color: #e9ecef;
+    --border-color: rgba(255, 255, 255, 0.05);
+    --chat-bot-bg: linear-gradient(135deg, #1c1f26 0%, #2a2e39 100%);
+    --chat-user-bg: linear-gradient(135deg, #3d8bfd 0%, #0d6efd 100%);
+    --chat-user-text: #ffffff;
     --text-muted: #adb5bd;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.05);
+    --accent-glow: 0 0 20px rgba(61, 139, 253, 0.2);
 }
 
 body {
+    font-family: 'Inter', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Empêche le scroll global, on scrolle dans les zones */
+    background-image: radial-gradient(circle at top right, rgba(13, 110, 253, 0.05), transparent 40%),
+                      radial-gradient(circle at bottom left, rgba(13, 110, 253, 0.05), transparent 40%);
 }
 
 .navbar {
     background-color: var(--panel-bg) !important;
-    border-color: var(--border-color) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: var(--glass-border) !important;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.02);
 }
 
 .main-container {
     flex-grow: 1;
     padding-bottom: 20px;
-    height: calc(100vh - 80px); /* Ajustement pour la navbar */
+    height: calc(100vh - 70px);
 }
 
-/* Panneau de Chat */
-.chat-panel {
-    background-color: var(--panel-bg) !important;
-    border-color: var(--border-color) !important;
+/* Glassmorphism Panels */
+.chat-panel, .card {
+    background: var(--panel-bg) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: var(--glass-border) !important;
+    box-shadow: var(--glass-shadow) !important;
+    border-radius: 16px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--glass-shadow), var(--accent-glow) !important;
+    transform: translateY(-2px);
 }
 
 .chat-history {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+    background-color: transparent;
+    border: none;
     display: flex;
     flex-direction: column;
     scroll-behavior: smooth;
+    padding: 10px 5px;
 }
 
-/* Bulles de message */
+/* Bulles de message avec Micro-animations */
 .msg-bubble {
-    max-width: 90%;
+    max-width: 85%;
     word-wrap: break-word;
     font-size: 0.95rem;
-    animation: fadeIn 0.3s ease-in-out;
+    line-height: 1.5;
+    animation: slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 1px solid var(--border-color);
 }
 
 .bot-msg {
     align-self: flex-start;
-    background-color: var(--chat-bot-bg) !important;
-    border-left: 3px solid #0d6efd;
+    background: var(--chat-bot-bg) !important;
+    border-bottom-left-radius: 4px !important;
     color: var(--text-color);
 }
 
 .user-msg {
     align-self: flex-end;
-    background-color: var(--chat-user-bg) !important;
-    border-right: 3px solid #6c757d;
-    color: var(--text-color);
-    text-align: right;
+    background: var(--chat-user-bg) !important;
+    border-bottom-right-radius: 4px !important;
+    color: var(--chat-user-text);
+    border: none;
+}
+
+.user-msg .bi {
+    color: var(--chat-user-text) !important;
 }
 
 .intent-details {
     font-size: 0.8rem;
-    background-color: rgba(0,0,0,0.05);
-    padding: 5px;
-    border-radius: 4px;
-    margin-top: 8px;
-    border-left: 2px solid #198754;
+    background-color: rgba(255,255,255,0.4);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 10px;
+    border-left: 3px solid #10b981;
+    backdrop-filter: blur(4px);
 }
 
 [data-bs-theme="dark"] .intent-details {
-    background-color: rgba(255,255,255,0.05);
+    background-color: rgba(0,0,0,0.2);
+}
+
+/* Inputs & Buttons - Premium Feel */
+.form-control {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 20px 0 0 20px;
+    padding: 12px 20px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
+    border-color: #0d6efd;
+}
+
+.btn-primary {
+    border-radius: 0 20px 20px 0;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateX(2px);
+    box-shadow: var(--accent-glow);
 }
 
 /* Badges de suggestion */
 .badge-suggestion {
-    transition: transform 0.2s, opacity 0.2s;
-}
-.badge-suggestion:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
-.cursor-pointer {
-    cursor: pointer;
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Cartes (Graphique et Tableau) */
-.card {
-    background-color: var(--panel-bg);
-    border-color: var(--border-color);
-    color: var(--text-color);
+.badge-suggestion:hover {
+    transform: translateY(-2px);
+    background-color: #0d6efd !important;
+    color: white !important;
+    border-color: #0d6efd;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3);
 }
+
+/* Tableau Premium */
 .table {
     color: var(--text-color);
+    vertical-align: middle;
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+    transition: background-color 0.2s;
 }
 .table-striped>tbody>tr:nth-of-type(odd)>* {
     color: var(--text-color);
+    background-color: rgba(0,0,0,0.015);
+}
+[data-bs-theme="dark"] .table-striped>tbody>tr:nth-of-type(odd)>* {
+    background-color: rgba(255,255,255,0.015);
+}
+th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
 }
 
-/* Utilitaires */
-.text-light-gray {
-    color: var(--border-color);
+/* Animations clés */
+@keyframes slideUpFade {
+    from { 
+        opacity: 0; 
+        transform: translateY(15px) scale(0.98); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+    }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Scrollbar personnalisée pour la zone de chat */
-.chat-history::-webkit-scrollbar {
+/* Scrollbar personnalisée Elegante */
+::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
-.chat-history::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
     background: transparent;
 }
-.chat-history::-webkit-scrollbar-thumb {
-    background-color: #adb5bd;
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.1);
     border-radius: 10px;
+}
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.1);
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255,255,255,0.2);
 }

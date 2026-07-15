@@ -177,7 +177,30 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Ajustement des couleurs selon le thème
         const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-        const textColor = isDark ? '#f8f9fa' : '#212529';
+        const textColor = isDark ? '#f8f9fa' : '#2b3035';
+        const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+        
+        // Ajout d'un dégradé pour les graphiques de type "line"
+        if (chartConfig.type === 'line' && chartConfig.datasets.length > 0) {
+            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(13, 110, 253, 0.5)');
+            gradient.addColorStop(1, 'rgba(13, 110, 253, 0.0)');
+            chartConfig.datasets[0].backgroundColor = gradient;
+            chartConfig.datasets[0].fill = true;
+            chartConfig.datasets[0].borderColor = '#0d6efd';
+            chartConfig.datasets[0].pointBackgroundColor = '#ffffff';
+            chartConfig.datasets[0].pointBorderColor = '#0d6efd';
+            chartConfig.datasets[0].pointBorderWidth = 2;
+            chartConfig.datasets[0].pointRadius = 4;
+            chartConfig.datasets[0].pointHoverRadius = 6;
+        } else if (chartConfig.datasets.length > 0) {
+            // Amélioration des bar charts
+            chartConfig.datasets[0].backgroundColor = 'rgba(13, 110, 253, 0.7)';
+            chartConfig.datasets[0].borderColor = '#0d6efd';
+            chartConfig.datasets[0].borderRadius = 4;
+            chartConfig.datasets[0].borderWidth = 0;
+            chartConfig.datasets[0].hoverBackgroundColor = 'rgba(13, 110, 253, 1)';
+        }
         
         chartInstance = new Chart(ctx, {
             type: chartConfig.type,
@@ -188,14 +211,32 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                },
                 plugins: {
                     legend: {
-                        labels: { color: textColor }
+                        labels: { color: textColor, font: { family: "'Inter', sans-serif", size: 13 } }
+                    },
+                    tooltip: {
+                        backgroundColor: isDark ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)',
+                        titleColor: isDark ? '#000' : '#fff',
+                        bodyColor: isDark ? '#000' : '#fff',
+                        padding: 10,
+                        cornerRadius: 8,
+                        displayColors: false
                     }
                 },
                 scales: {
-                    x: { ticks: { color: textColor }, grid: { color: isDark ? '#495057' : '#dee2e6' } },
-                    y: { ticks: { color: textColor }, grid: { color: isDark ? '#495057' : '#dee2e6' } }
+                    x: { 
+                        ticks: { color: textColor, font: { family: "'Inter', sans-serif" } }, 
+                        grid: { color: gridColor, drawBorder: false } 
+                    },
+                    y: { 
+                        ticks: { color: textColor, font: { family: "'Inter', sans-serif" } }, 
+                        grid: { color: gridColor, drawBorder: false } 
+                    }
                 }
             }
         });
