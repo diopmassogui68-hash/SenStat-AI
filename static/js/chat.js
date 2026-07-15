@@ -137,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 appendMessage(msgHtml, 'bot-msg', '<i class="bi bi-robot me-2"></i>SenStat AI');
+                speakText(msgHtml);
                 
                 // Mettre à jour le tableau
                 updateTable(data.table);
@@ -425,4 +426,79 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- Web Speech API (Chat Vocal) ---
+    const micBtn = document.getElementById('micBtn');
+    const micIcon = document.getElementById('micIcon');
+    let isRecording = false;
+    let synth = window.speechSynthesis;
+
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        micBtn.style.display = 'none'; // Cacher si non supporté
+        console.warn("L'API Web Speech n'est pas supportée par ce navigateur.");
+    } else {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = function() {
+            isRecording = true;
+            micIcon.classList.replace('bi-mic-fill', 'bi-mic-mute-fill');
+            micBtn.classList.add('recording');
+            input.placeholder = "Écoute en cours...";
+            if (synth) synth.cancel(); // Couper la voix si le bot parle
+        };
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            input.value = transcript;
+            stopRecordingUI();
+            form.dispatchEvent(new Event('submit')); // Soumettre automatiquement
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Erreur vocale :', event.error);
+            stopRecordingUI();
+            appendMessage("Erreur d'écoute vocale : " + event.error, 'bot-msg text-danger', '<i class="bi bi-exclamation-triangle me-2"></i>Erreur');
+        };
+
+        recognition.onend = function() {
+            stopRecordingUI();
+        };
+
+        micBtn.addEventListener('click', () => {
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+    }
+
+    function stopRecordingUI() {
+        isRecording = false;
+        if (micIcon.classList.contains('bi-mic-mute-fill')) {
+            micIcon.classList.replace('bi-mic-mute-fill', 'bi-mic-fill');
+        }
+        micBtn.classList.remove('recording');
+        input.placeholder = "Demandez une statistique...";
+    }
+
+    function speakText(text) {
+        if (!synth) return;
+        synth.cancel();
+        
+        // Nettoyer le HTML pour la lecture
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = text;
+        const cleanText = tempDiv.textContent || tempDiv.innerText || "";
+        
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        synth.speak(utterance);
+    }
 });
