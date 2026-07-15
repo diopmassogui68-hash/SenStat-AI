@@ -84,7 +84,12 @@ def parse_question(question: str) -> QueryIntent:
         operation = "ranking"
 
     # Type de graphique adapté à l'opération
-    chart_type = "line" if operation == "trend" else "bar"
+    if operation == "trend":
+        chart_type = "line"
+    elif operation == "proportion":
+        chart_type = "doughnut"  # Version plus esthétique du camembert
+    else:
+        chart_type = "bar"
 
     return QueryIntent(
         indicator=indicator,

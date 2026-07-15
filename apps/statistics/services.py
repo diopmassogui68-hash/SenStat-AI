@@ -184,6 +184,23 @@ class StatistiqueService:
                     "datasets": [{"label": label, "data": [d[indicator] for d in data]}],
                 }
 
+        # --- Opération PROPORTION ---
+        elif intent.operation == "proportion":
+            if not intent.start_year and not intent.end_year:
+                qs = qs.filter(annee=2024)
+
+            data = list(qs.values('region', 'annee', indicator).order_by(f'-{indicator}'))
+            table_data = data
+            if not data:
+                answer = "Aucune donnée disponible pour cette répartition."
+            else:
+                answer = f"Répartition de {label} par région."
+                chart_data = {
+                    "type": intent.chart_type,
+                    "labels": [d['region'] for d in data],
+                    "datasets": [{"label": label, "data": [d[indicator] for d in data]}],
+                }
+
         # --- Opération SUM ---
         elif intent.operation == "sum":
             result = qs.aggregate(total=Sum(indicator))

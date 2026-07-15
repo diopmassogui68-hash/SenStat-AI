@@ -80,6 +80,7 @@ OPERATION_SYNONYMS: dict[str, list[str]] = {
     ],
     "sum": ["somme", "cumul"],
     "average": ["moyenne", "en moyenne"],
+    "proportion": ["proportion", "repartition", "part ", "parts"],
     "value": ["valeur", "combien", "quel est", "quelle est"],
 }
 
