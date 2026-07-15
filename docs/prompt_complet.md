@@ -68,7 +68,7 @@ Le front doit afficher correctement la réponse même si `chart` est `null`.
 5. Limiter les dépendances externes — privilégier ce qui est déjà dans la stack imposée.
 6. Préférer les fonctionnalités natives de Django lorsque c'est possible.
 7. S'il existe plusieurs solutions valables, expliquer brièvement pourquoi celle retenue est la meilleure dans ce contexte précis (lab noté, 8 Go RAM, délai court).
-8. Toute fonctionnalité bonus ajoutée doit justifier sa valeur pour la démonstration finale ou pour un critère du barème — sinon elle est écartée.
+8. Toute fonctionnalité bonus ajoutée doit justify sa valeur pour la démonstration finale ou pour un critère du barème — sinon elle est écartée.
 9. Ne jamais sacrifier la lisibilité ou la maintenabilité pour gagner quelques lignes de code.
 
 ## Règles de livraison
@@ -173,8 +173,8 @@ agent_ia_statistique/
 ```
 Le repository pattern reste limité à `chatbot/` (règle de décision #4). Ne pas dupliquer cette couche dans `statistics/`.
 
-## Dispatching des tâches (travail en binôme, en parallèle)
-Le projet est réalisé par deux personnes, en parallèle sur des modules distincts : **El Hadji Massogui Diop** (backend/Django) et **Serigne Mbacke Faye** (frontend/JS). Respecte cette répartition et ne mélange jamais les responsabilités des deux personnes dans une même étape.
+## Dispatching des tâches (travail en trinôme)
+Le projet est réalisé par trois personnes : **El Hadji Massogui Diop** (backend/Django), **Serigne Mbacke Faye** (cœur frontend) et **Sanor Mangane** (habillage & expérience utilisateur). Respecte cette répartition et ne mélange jamais les responsabilités entre les trois dans une même étape.
 
 **El Hadji Massogui Diop — Backend/Django :**
 - Étape 2 : Modèle `StatistiqueRegionale` + admin + migrations
@@ -185,19 +185,67 @@ Le projet est réalisé par deux personnes, en parallèle sur des modules distin
 - Étape 8 : Intégration Gemini + repli déterministe garanti
 - Tests backend (`statistics/tests/`, `chatbot/tests/`, `api/tests/`)
 
-**Serigne Mbacke Faye — Frontend/JS :**
-- Étape 7 : Interface conversationnelle (Bootstrap 5, `chat.js`, gestion Chart.js — destruction/recréation propre du graphique)
-- CSS + mode sombre (bonus priorité moyenne)
-- Intégration des bonus visuels : bloc "comment j'ai compris votre question", suggestions de questions contextuelles, historique de session côté client
+**Serigne Mbacke Faye — Cœur frontend :**
+- Étape 7 (structure) : HTML/Bootstrap, `chat.js` (appel API, gestion du cycle de vie Chart.js — destruction/recréation propre), zone de saisie + réponse + indicateur de chargement + gestion d'erreurs lisible
+- Intégration technique du contrat JSON reçu du backend (`answer`, `table`, `chart`, `metadata`)
+
+**Sanor Mangane — Habillage & expérience utilisateur :**
+- CSS + mode sombre (variables CSS pures, bonus priorité moyenne)
+- Bonus visuels : bloc "comment j'ai compris votre question", suggestions de questions contextuelles, historique de session côté client
+- Mention "données pédagogiques fictives" intégrée visuellement de façon proéminente
 - Captures d'écran finales + mise en forme du README
 
 **Ensemble (synchronisation obligatoire) :**
 - Étape 1 : Arborescence (déjà validée)
-- Étape 6 (fin) : le contrat JSON de l'API doit être figé et communiqué à Serigne Mbacke Faye **avant** qu'il commence l'étape 7, pour qu'il ne soit jamais bloqué à attendre le backend réel
+- Étape 6 (fin) : le contrat JSON de l'API doit être figé et communiqué à Serigne Mbacke Faye et Sanor Mangane **avant** qu'ils commencent l'étape 7, pour qu'ils ne soient jamais bloqués à attendre le backend réel
+- Sanor Mangane démarre son lot dès que Serigne Mbacke Faye a posé le squelette HTML de base — pas besoin d'attendre la fin complète de l'étape 7
 - Étapes 9 à 11 : tests d'intégration, revue finale avec tableau de conformité, préparation de la démo
 
 **Stratégie Git pour le travail parallèle :**
-- Deux branches actives : `feature/backend-diop` et `feature/frontend-faye`, créées dès que le contrat API (étape 6) est figé.
-- Pendant que le backend n'est pas encore terminé, Serigne Mbacke Faye travaille avec des réponses JSON simulées (fixtures statiques respectant exactement le contrat de l'étape 6) pour ne jamais dépendre du travail d'El Hadji Massogui Diop en temps réel.
+- Deux branches actives : `feature/backend-diop` et `feature/frontend-faye-mangane`, créées dès que le contrat API (étape 6) est figé.
+- Sur `feature/frontend-faye-mangane`, Serigne Mbacke Faye et Sanor Mangane commitent séparément et distinctement (structure vs habillage), pour garder une attribution claire du travail de chacun.
+- Pendant que le backend n'est pas encore terminé, l'équipe frontend travaille avec des réponses JSON simulées (fixtures statiques respectant exactement le contrat de l'étape 6) pour ne jamais dépendre du travail d'El Hadji Massogui Diop en temps réel.
 - Chaque branche merge dans `develop` uniquement après que l'étape correspondante est validée selon les "Règles de livraison" définies plus haut — jamais de merge direct sur `main`.
-- Commits progressifs et clairement rattachés à une étape et un auteur (ex. `feat(statistics): modèle StatistiqueRegionale + contrainte unicité — Diop`), pas de commit générique.
+- Commits progressifs et clairement rattachés à une étape et un auteur (ex. `feat(statistics): modèle StatistiqueRegionale + contrainte unicité — Diop`, `style(chat): mode sombre + bonus suggestions — Mangane`), pas de commit générique.
+
+## Méthode de travail imposée
+Ne génère jamais tout le projet d'un coup. Avance comme un vrai chef de projet, étape par étape, et à chaque étape rappelle-moi explicitement à quel(s) critère(s) du barème cette étape répond :
+1. Analyse des besoins + arborescence du projet (légère, pas de sur-ingénierie d'apps inutiles)
+2. Modèle + admin Django + migrations
+3. Commande d'import CSV idempotente + validation
+4. Dictionnaire de synonymes + extraction d'entités (régions/années/indicateurs) + détection d'ambiguïté
+5. Moteur ORM avec whitelist de champs pour les 6 opérations
+6. Endpoint API `POST /api/question/` avec contrat JSON figé + drf-spectacular
+7. Interface conversationnelle (Bootstrap 5 + JS vanilla + Chart.js), mention données fictives visible
+8. Intégration Gemini optionnelle avec repli déterministe garanti
+9. Tests (import, unicité, alias, extraction années, chaque opération, ambiguïté, hors périmètre) — 8 minimum
+10. README (installation, import, exemples de questions), captures d'écran (réponse simple / comparaison / évolution), note sur les limites et améliorations possibles
+11. Préparation des 5 questions de démonstration (dont 2 avec graphique) pour la soutenance de 5 minutes
+
+## Niveau d'exigence "dépasser le jury" (sans complexifier ni alourdir la stack)
+- Code impeccable et commenté plutôt que features en plus.
+- Messages d'erreur et de clarification rédigés avec soin (français naturel, pas robotique) — ça se voit à l'oral.
+- Tableau de bord sobre mais soigné (une seule page suffit, pas besoin de multi-dashboard).
+- Tests qui couvrent explicitement chaque ligne des "critères de réussite technique" du lab (70 lignes exactes, pas de doublon au 2e import, pourcentages 0–100, aucun SQL utilisateur exécuté, cohérence graphique/tableau, pas de réponse inventée sur ambiguïté, fonctionnement sans IA externe).
+- Une note d'1 page "limites & améliorations" bien argumentée : ça rassure un jury sur la maturité du binôme/groupe.
+
+## Bonus différenciants (concours) — à ajouter APRÈS que le cœur noté soit 100% fonctionnel, jamais avant
+Ces ajouts n'apparaissent pas dans le barème officiel mais sont soit suggérés par le lab lui-même (piste d'extension §12), soit à coût de développement quasi nul vu la stack existante. Objectif : se démarquer des autres groupes à l'oral sans jamais risquer la stabilité du cœur noté. Priorité stricte : si le temps manque, on les saute sans regret.
+
+**Priorité haute (impact fort, coût quasi nul) :**
+1. Bloc "Comment j'ai compris votre question" affiché sous chaque réponse : montre le `QueryIntent` extrait (indicateur, régions, années, opération) — rend le moteur NLP visible et lisible pour le jury.
+2. Suggestions de questions contextuelles après chaque réponse (2-3 questions liées, générées par simple logique, pas d'IA nécessaire).
+3. Badge de correction orthographique visible quand une région/indicateur mal orthographié est corrigé — met en valeur explicitement le critère "détection des fautes d'orthographe" du cahier des charges.
+4. Historique de session géré côté client en JS (tableau en mémoire, zéro appel serveur, zéro charge DB).
+
+**Priorité moyenne (bon impact, si le temps le permet) :**
+5. Export CSV et export PNG du graphique affiché (suggéré par le lab en piste d'extension, hors barème obligatoire donc bonus pur).
+6. Mode sombre en CSS pur (variables CSS uniquement, aucune librairie, coût RAM nul).
+7. Endpoint `/api/health/` + documentation Swagger/OpenAPI soignée (montre une posture "prêt pour la prod").
+
+**À éviter pour ce format de lab (risque > bénéfice) :**
+- Carte choroplèthe (données géométriques absentes du dataset fourni, risque de bug en démo)
+- Authentification multi-utilisateurs / quotas (hors scope noté, coûteux en temps)
+- Export PDF/Excel complet (le CSV suffit à démontrer la compétence)
+
+Signale-moi clairement, à chaque étape, si tu introduis un élément bonus, pour que je sache que ce n'est pas un critère noté obligatoire.
