@@ -60,15 +60,20 @@
                     <span class="ms-2 small text-muted">Analyse en cours...</span>
                 </div>
 
-                <!-- Zone de saisie -->
-                <form id="questionForm" class="mt-auto">
-                    <div class="input-group">
-                        <input type="text" id="questionInput" class="form-control" placeholder="Ex: Évolution du chômage à Dakar ?" required autocomplete="off">
-                        <button class="btn btn-primary" type="submit" id="sendBtn">
-                            <i class="bi bi-send-fill"></i>
-                        </button>
-                    </div>
-                </form>
+                <!-- Input Flottant -->
+                <div class="input-area">
+                    <form id="questionForm">
+                        <div class="position-relative w-100">
+                            <input type="text" id="questionInput" class="form-control w-100 pe-5" placeholder="Ex: Compare la population de Dakar et Thiès" required autocomplete="off">
+                            <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-5 text-secondary" id="voiceBtn" title="Parler">
+                                <i class="bi bi-mic-fill fs-5"></i>
+                            </button>
+                            <button type="submit" class="btn-send" id="sendBtn">
+                                <i class="bi bi-arrow-up-short fs-4"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
                 <!-- Suggestions (Bonus) -->
                 <div class="mt-2 text-center" id="suggestionsContainer">

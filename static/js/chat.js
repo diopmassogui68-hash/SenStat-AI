@@ -44,6 +44,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnShowMap = document.getElementById('btnShowMap');
     const chartContainer = document.getElementById('chartContainer');
     const mapContainer = document.getElementById('mapContainer');
+    const voiceBtn = document.getElementById('voiceBtn');
+    
+    // Voice Recognition setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            input.value = transcript;
+            voiceBtn.classList.remove('text-danger');
+            voiceBtn.innerHTML = '<i class="bi bi-mic-fill fs-5"></i>';
+            // Auto submit
+            form.dispatchEvent(new Event('submit'));
+        };
+        
+        recognition.onspeechend = () => {
+            recognition.stop();
+            voiceBtn.classList.remove('text-danger');
+            voiceBtn.innerHTML = '<i class="bi bi-mic-fill fs-5"></i>';
+        };
+        
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            voiceBtn.classList.remove('text-danger');
+            voiceBtn.innerHTML = '<i class="bi bi-mic-mute-fill fs-5"></i>';
+        };
+        
+        voiceBtn.addEventListener('click', () => {
+            if (voiceBtn.classList.contains('text-danger')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+                voiceBtn.classList.add('text-danger');
+                voiceBtn.innerHTML = '<i class="spinner-grow spinner-grow-sm"></i>';
+            }
+        });
+    } else {
+        if(voiceBtn) voiceBtn.style.display = 'none'; // Not supported
+    }
     
     // Initialiser la carte Leaflet
     initMap();
