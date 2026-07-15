@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
     
     // Nouveaux éléments Map/Chart toggle
     const btnShowChart = document.getElementById('btnShowChart');
@@ -127,6 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 }
                 
+                if(data.metadata && data.metadata.cached) {
+                    msgHtml += `
+                        <div class="intent-details mt-2">
+                            <span class="badge bg-success"><i class="bi bi-lightning-charge"></i> Réponse servie depuis le Cache (Rapide)</span>
+                        </div>
+                    `;
+                }
+
                 appendMessage(msgHtml, 'bot-msg', '<i class="bi bi-robot me-2"></i>SenStat AI');
                 
                 // Mettre à jour le tableau
@@ -138,12 +147,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Mettre à jour la carte Leaflet
                 updateMap(data.table, data.metadata?.intent_debug?.indicator);
                 
-                // Activer l'export CSV si données
+                // Activer l'export CSV et PDF si données
                 if(data.table && data.table.length > 0) {
                     exportCsvBtn.classList.remove('d-none');
+                    exportPdfBtn.classList.remove('d-none');
                     exportCsvBtn.onclick = () => exportToCsv(data.table);
+                    exportPdfBtn.onclick = () => exportToPdf();
                 } else {
                     exportCsvBtn.classList.add('d-none');
+                    exportPdfBtn.classList.add('d-none');
                 }
                 
             } else {
@@ -376,6 +388,30 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
         document.body.removeChild(link);
     } // <- fermeture de exportToCsv
+    
+    // Export PDF
+    function exportToPdf() {
+        // Cibler la zone de visualisation (col-md-7)
+        const element = document.querySelector('.col-md-7');
+        const opt = {
+            margin:       10,
+            filename:     'Rapport_SenStat.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        
+        // Ajouter un titre temporaire
+        const title = document.createElement('h3');
+        title.innerHTML = 'Rapport Statistique - SenStat AI';
+        title.style.textAlign = 'center';
+        title.style.marginBottom = '20px';
+        element.prepend(title);
+        
+        html2pdf().set(opt).from(element).save().then(() => {
+            element.removeChild(title);
+        });
+    }
     
     // Gestion des suggestions
     document.querySelectorAll('.badge-suggestion').forEach(badge => {

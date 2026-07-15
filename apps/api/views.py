@@ -5,6 +5,8 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.core.cache import cache
+import hashlib
 
 from apps.chatbot.services import QuestionService
 
@@ -33,6 +35,20 @@ class QuestionAPIView(APIView):
         serializer = QuestionRequestSerializer(data=request.data)
         if serializer.is_valid():
             question_text = serializer.validated_data['question']
+            
+            # Caching : Hash de la question (en minuscule pour ignorer la casse)
+            cache_key = "question_" + hashlib.md5(question_text.lower().strip().encode('utf-8')).hexdigest()
+            cached_result = cache.get(cache_key)
+            
+            if cached_result:
+                # Ajouter un flag pour le debug/UI si besoin
+                cached_result['metadata']['cached'] = True
+                return Response(cached_result, status=status.HTTP_200_OK)
+            
             result = QuestionService.process_question(question_text)
+            
+            # Mettre en cache pour 15 minutes (900 secondes)
+            cache.set(cache_key, result, timeout=900)
+            
             return Response(result, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
