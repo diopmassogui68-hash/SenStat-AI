@@ -1,6 +1,6 @@
 """Vue API principale pour le traitement des questions en langage naturel."""
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from apps.chatbot.services import QuestionService
 from .serializers import QuestionRequestSerializer, QuestionResponseSerializer
 
 
-@method_decorator(csrf_protect, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
 class QuestionAPIView(APIView):
     """Endpoint POST /api/question/ — traite une question et retourne la réponse structurée.
 

@@ -96,6 +96,9 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# --- CORS ---
+CORS_ALLOW_ALL_ORIGINS = True
+
 # --- Django REST Framework ---
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
