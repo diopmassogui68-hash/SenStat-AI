@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeIcon = document.getElementById('themeIcon');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     
+    // Web Speech API globals
+    let synth = window.speechSynthesis;
+    let isVoiceEnabled = true; // Permet de désactiver la voix si désiré
+    
     // Initialisation du thème sombre (Bonus Sanor)
     const currentTheme = localStorage.getItem('theme') || 'light';
     setTheme(currentTheme);
@@ -82,6 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 appendMessage(msgHtml, 'bot-msg', '<i class="bi bi-robot me-2"></i>SenStat AI');
                 
+                // Synthèse vocale de la réponse
+                speakText(data.answer);
+                
                 // Mettre à jour le tableau
                 updateTable(data.table);
                 
@@ -100,10 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Erreur 400 côté serveur (Validation)
                 let errorMsg = data.question ? data.question[0] : "Une erreur s'est produite lors de la validation.";
                 appendMessage(`Erreur : ${errorMsg}`, 'bot-msg text-danger', '<i class="bi bi-exclamation-triangle me-2"></i>Erreur');
+                speakText(`Erreur : ${errorMsg}`);
             }
         } catch (error) {
             console.error('Erreur Fetch:', error);
             appendMessage("Erreur de connexion au serveur. Veuillez vérifier votre réseau.", 'bot-msg text-danger', '<i class="bi bi-wifi-off me-2"></i>Erreur');
+            speakText("Erreur de connexion au serveur.");
         } finally {
             // Cacher le loader et réactiver l'input
             loader.classList.add('d-none');
@@ -281,4 +290,73 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- Bonus Vocal : Web Speech API ---
+    const micBtn = document.getElementById('micBtn');
+    const micIcon = document.getElementById('micIcon');
+    let recognition = null;
+    let isRecording = false;
+
+    if (micBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = function() {
+            isRecording = true;
+            micIcon.classList.replace('bi-mic-fill', 'bi-mic-mute-fill');
+            micBtn.classList.replace('btn-outline-primary', 'btn-danger');
+            input.placeholder = "Écoute en cours...";
+            if (synth) synth.cancel(); // Couper la voix si le bot parle
+        };
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            input.value = transcript;
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        };
+
+        recognition.onerror = function(event) {
+            console.error("Erreur de reconnaissance vocale:", event.error);
+            stopRecordingUI();
+        };
+
+        recognition.onend = function() {
+            stopRecordingUI();
+        };
+
+        micBtn.addEventListener('click', () => {
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+    } else if (micBtn) {
+        micBtn.style.display = 'none'; // Cacher si non supporté
+    }
+
+    function stopRecordingUI() {
+        isRecording = false;
+        if (micIcon.classList.contains('bi-mic-mute-fill')) {
+            micIcon.classList.replace('bi-mic-mute-fill', 'bi-mic-fill');
+        }
+        if (micBtn.classList.contains('btn-danger')) {
+            micBtn.classList.replace('btn-danger', 'btn-outline-primary');
+        }
+        input.placeholder = "Ex: Évolution du chômage à Dakar ?";
+    }
+
+    function speakText(text) {
+        if (!synth || !isVoiceEnabled) return;
+        synth.cancel();
+        // Nettoyer le HTML pour la lecture
+        const cleanText = text.replace(/<[^>]*>?/gm, '');
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 1.0;
+        synth.speak(utterance);
+    }
 });
