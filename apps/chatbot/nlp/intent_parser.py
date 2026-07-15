@@ -22,6 +22,10 @@ class OutOfScopeError(Exception):
     """La question porte sur un sujet non couvert par le jeu de données."""
 
 
+class ChitChatError(Exception):
+    """La question est une simple salutation ou conversationnelle."""
+
+
 def parse_question(question: str) -> QueryIntent:
     """Transforme une question en langage naturel en QueryIntent structuré.
 
@@ -48,6 +52,17 @@ def parse_question(question: str) -> QueryIntent:
     # 1. Indicateur (obligatoire)
     indicator = find_indicator(norm_text)
     if not indicator:
+        # Vérification chit-chat avant OutOfScope
+        chitchat_keywords = [
+            "bonjour", "salut", "hello", "coucou", "comment ca va", 
+            "comment vas tu", "comment vous allez", "ca va", "merci"
+        ]
+        if any(keyword in norm_text for keyword in chitchat_keywords):
+            raise ChitChatError(
+                "Bonjour ! Je vais très bien, merci. 😊 Je suis votre assistant "
+                "statistique. Que souhaitez-vous analyser concernant les régions du Sénégal ?"
+            )
+            
         raise OutOfScopeError(
             "Désolé, je ne reconnais pas l'indicateur dans votre question. "
             "Je peux vous renseigner sur : la population, l'urbanisation, "

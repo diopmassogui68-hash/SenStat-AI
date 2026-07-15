@@ -11,6 +11,7 @@ from apps.chatbot.ai.gemini_client import call_gemini
 from apps.chatbot.nlp.intent_parser import (
     AmbiguousQueryError,
     OutOfScopeError,
+    ChitChatError,
     parse_question,
 )
 from apps.statistics.services import StatistiqueService
@@ -78,6 +79,14 @@ class QuestionService:
             }
 
         except OutOfScopeError as e:
+            return {
+                "answer": str(e),
+                "table": [],
+                "chart": None,
+                "metadata": metadata,
+            }
+
+        except ChitChatError as e:
             return {
                 "answer": str(e),
                 "table": [],
