@@ -240,6 +240,7 @@ body {
     overflow-x: auto;
     padding: 10px 5px;
     scrollbar-width: none; /* Firefox */
+    flex-shrink: 0;
 }
 
 .suggestions-wrapper::-webkit-scrollbar {
