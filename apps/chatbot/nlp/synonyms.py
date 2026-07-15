@@ -77,10 +77,10 @@ OPERATION_SYNONYMS: dict[str, list[str]] = {
     ],
     "ranking": [
         "classement", "top", "meilleurs", "pires",
-        "plus eleve", "plus faible",
+        "plus eleve", "plus faible", "premier", "dernier"
     ],
-    "sum": ["somme", "cumul"],
-    "average": ["moyenne", "en moyenne"],
+    "sum": ["somme", "cumul", "total", "totale"],
+    "average": ["moyenne", "en moyenne", "moyen", "moyens"],
     "proportion": ["proportion", "repartition", "part ", "parts"],
     "value": ["valeur", "combien", "quel est", "quelle est"],
 }
