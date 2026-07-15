@@ -3,6 +3,7 @@ Modèle de données principal pour les statistiques régionales du Sénégal.
 Correspond exactement au dictionnaire de données du cahier des charges.
 """
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
@@ -46,7 +47,12 @@ class StatistiqueRegionale(models.Model):
     )
 
     class Meta:
-        unique_together = ('region', 'annee')
+        constraints = [
+            UniqueConstraint(
+                fields=['region', 'annee'],
+                name='unique_region_annee',
+            ),
+        ]
         ordering = ['region', 'annee']
         verbose_name = "Statistique Régionale"
         verbose_name_plural = "Statistiques Régionales"

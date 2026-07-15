@@ -53,11 +53,11 @@ INDICATOR_SYNONYMS: dict[str, list[str]] = {
         "centres de sante", "centre de sante", "hopitaux", "cliniques", "dispensaires",
     ],
     "taux_scolarisation_pct": [
-        "taux de scolarisation", "scolarisation", "ecole", "eleves",
+        "taux de scolarisation", "scolarisation", "scolarise",
     ],
     "production_cerealiere_tonnes": [
         "production cerealiere", "cereales", "recoltes cerealiere",
-        "tonnes de cereales", "agriculture",
+        "tonnes de cereales",
     ],
 }
 

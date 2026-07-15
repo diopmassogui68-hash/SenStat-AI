@@ -24,11 +24,7 @@ COLONNES_ATTENDUES = frozenset([
     'production_cerealiere_tonnes',
 ])
 
-# Champs de type pourcentage à valider entre 0 et 100
-CHAMPS_POURCENTAGE = [
-    'taux_urbanisation_pct', 'taux_alphabetisation_pct', 'taux_chomage_pct',
-    'taux_pauvrete_pct', 'acces_internet_pct', 'taux_scolarisation_pct',
-]
+
 
 
 class Command(BaseCommand):
