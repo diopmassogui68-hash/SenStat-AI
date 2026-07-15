@@ -27,6 +27,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'apps.statistics.apps.StatisticsConfig',
+    'apps.chatbot.apps.ChatbotConfig',
 ]
 
 MIDDLEWARE = [
