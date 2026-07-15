@@ -98,8 +98,12 @@ class StatistiqueService:
                         f"{_get_label(indicator).capitalize()} pour {premier['region']} "
                         f"en {premier['annee']} est de {premier[indicator]}."
                     )
+                elif len(data) <= 15:
+                    details = [f"{d['region']} ({d['annee']}) : {d[indicator]}" for d in data]
+                    details_txt = "<br>- " + "<br>- ".join(details)
+                    answer = f"Voici les données concernant {label} : {details_txt}"
                 else:
-                    answer = f"Voici les données concernant {label} : vous pouvez consulter les détails dans le tableau et le graphique."
+                    answer = f"Voici les données concernant {label} : vous pouvez consulter les {len(data)} résultats complets dans le tableau et le graphique."
                 chart_data = {
                     "type": intent.chart_type,
                     "labels": [f"{d['region']} ({d['annee']})" for d in data],
@@ -116,11 +120,11 @@ class StatistiqueService:
                 answer = "Aucune donnée trouvée pour cette comparaison."
             else:
                 regions_found = sorted(set(d['region'] for d in data))
-                if len(regions_found) > 3:
+                if len(data) > 15:
                     regions_txt = "plusieurs régions"
-                    details_txt = "Consultez le graphique pour voir la comparaison complète."
+                    details_txt = f"Consultez le graphique et le tableau pour voir la comparaison complète des {len(data)} résultats."
                 else:
-                    regions_txt = ", ".join(regions_found)
+                    regions_txt = "plusieurs régions" if len(regions_found) > 3 else ", ".join(regions_found)
                     details = [f"{d['region']} ({d['annee']}) : {d[indicator]}" for d in data]
                     details_txt = "<br>- " + "<br>- ".join(details)
                 
@@ -153,11 +157,15 @@ class StatistiqueService:
                 answer = "Aucune donnée trouvée pour l'évolution demandée."
             else:
                 regions_found = sorted(set(d['region'] for d in data))
-                if len(regions_found) > 3:
-                    regions_txt = "plusieurs régions"
+                regions_txt = "plusieurs régions" if len(regions_found) > 3 else ", ".join(regions_found)
+                
+                if len(data) <= 15:
+                    details = [f"{d['region']} ({d['annee']}) : {d[indicator]}" for d in data]
+                    details_txt = "<br>- " + "<br>- ".join(details)
+                    answer = f"Voici l'évolution de {label} pour {regions_txt} : {details_txt}"
                 else:
-                    regions_txt = ", ".join(regions_found)
-                answer = f"Voici l'évolution de {label} pour {regions_txt}. Les détails sont disponibles dans le tableau et le graphique ci-contre."
+                    answer = f"Voici l'évolution de {label} pour {regions_txt}. Les détails ({len(data)} résultats) sont disponibles dans le tableau et le graphique ci-contre."
+                
                 labels = sorted(set(d['annee'] for d in data))
                 datasets = []
                 for region in regions_found:
