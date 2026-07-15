@@ -88,8 +88,8 @@ OPERATION_SYNONYMS: dict[str, list[str]] = {
 # --- Les 14 régions officielles du Sénégal ---
 REGIONS_SENEGAL: list[str] = [
     "Dakar", "Diourbel", "Fatick", "Kaffrine", "Kaolack",
-    "Kedougou", "Kolda", "Louga", "Matam", "Saint-Louis",
-    "Sedhiou", "Tambacounda", "Thies", "Ziguinchor",
+    "Kédougou", "Kolda", "Louga", "Matam", "Saint-Louis",
+    "Sédhiou", "Tambacounda", "Thiès", "Ziguinchor",
 ]
 
 
