@@ -140,9 +140,14 @@
                 <div class="glass-panel table-card p-0" style="min-height: 250px;">
                     <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom" style="border-color: var(--border-color) !important; background: rgba(255,255,255,0.1);">
                         <h6 class="mb-0 fw-bold"><i class="bi bi-table text-primary me-2"></i>Données Sources</h6>
-                        <button id="exportCsvBtn" class="btn btn-outline-primary btn-sm rounded-pill px-3 d-none shadow-sm" title="Exporter les données (Bonus)">
-                            <i class="bi bi-cloud-download me-1"></i> Exporter CSV
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button id="exportCsvBtn" class="btn btn-outline-primary btn-sm rounded-pill px-3 d-none shadow-sm" title="Exporter en CSV">
+                                <i class="bi bi-filetype-csv me-1"></i> CSV
+                            </button>
+                            <button id="exportPdfBtn" class="btn btn-outline-danger btn-sm rounded-pill px-3 d-none shadow-sm" title="Exporter en PDF">
+                                <i class="bi bi-filetype-pdf me-1"></i> PDF
+                            </button>
+                        </div>
                     </div>
                     <div class="table-responsive p-0 m-0" style="max-height: 250px; overflow-y: auto;">
                         <table class="table table-hover table-striped mb-0 text-center" id="resultTable">
@@ -173,6 +178,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <!-- Leaflet JS (Map) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- html2pdf JS (Export PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="{% static 'js/chat.js' %}"></script>
 </body>
