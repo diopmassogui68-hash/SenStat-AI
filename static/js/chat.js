@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         recognition.onstart = function() {
             isRecording = true;
             micIcon.classList.replace('bi-mic-fill', 'bi-mic-mute-fill');
-            micBtn.classList.replace('btn-outline-primary', 'btn-danger');
+            micBtn.classList.add('recording');
             input.placeholder = "Écoute en cours...";
             if (synth) synth.cancel(); // Couper la voix si le bot parle
         };
@@ -343,10 +343,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (micIcon.classList.contains('bi-mic-mute-fill')) {
             micIcon.classList.replace('bi-mic-mute-fill', 'bi-mic-fill');
         }
-        if (micBtn.classList.contains('btn-danger')) {
-            micBtn.classList.replace('btn-danger', 'btn-outline-primary');
-        }
-        input.placeholder = "Ex: Évolution du chômage à Dakar ?";
+        micBtn.classList.remove('recording');
+        input.placeholder = "Demandez une statistique...";
     }
 
     function speakText(text) {
