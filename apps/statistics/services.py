@@ -221,13 +221,13 @@ class StatistiqueService:
             total = result['total'] or 0
             total = round(total, 2)
             table_data = [{"opération": "Somme", "indicateur": label, "valeur": total}]
-            answer = f"La somme totale de {label} est de {total}."
+            answer = f"Au total, {label} est de {total}."
 
         # --- Opération AVERAGE ---
         elif intent.operation == "average":
             result = qs.aggregate(moyenne=Avg(indicator))
             moy = round(result['moyenne'] or 0, 2)
             table_data = [{"opération": "Moyenne", "indicateur": label, "valeur": moy}]
-            answer = f"La moyenne de {label} est de {moy}."
+            answer = f"En moyenne, {label} est de {moy}."
 
         return answer, table_data, chart_data
