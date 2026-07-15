@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenStat-AI | Assistant Data Sénégal</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body class="bg-body-tertiary vh-100 d-flex flex-column">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body shadow-sm flex-shrink-0">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold text-primary" href="#">
+                <i class="bi bi-bar-chart-fill me-2 fs-3"></i>
+                SenStat-AI
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge text-bg-warning rounded-pill px-3 py-2 fw-semibold shadow-sm d-none d-md-inline-block">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Données pédagogiques fictives
+                </span>
+                <button id="theme-toggle" class="btn btn-outline-secondary rounded-circle btn-sm" title="Changer le thème">
+                    <i class="bi bi-moon-stars-fill" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container my-4 flex-grow-1 d-flex flex-column overflow-hidden">
+        <div class="row h-100 g-4">
+            <!-- Left Panel (Chat Interface) -->
+            <div class="col-lg-8 d-flex flex-column h-100">
+                <div class="card shadow-sm border-0 flex-grow-1 d-flex flex-column overflow-hidden rounded-4">
+                    
+                    <!-- Chat History Area -->
+                    <div id="chat-history" class="card-body overflow-auto bg-body p-md-4 p-3 custom-scrollbar flex-grow-1">
+                        <!-- Initial Bot Message -->
+                        <div class="message bot-message d-flex mb-4">
+                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-3 shadow-sm" style="width: 40px; height: 40px;">
+                                <i class="bi bi-robot fs-5"></i>
+                            </div>
+                            <div class="message-content bg-body-secondary p-3 rounded-4 rounded-top-left-0 shadow-sm">
+                                <p class="mb-0">Bonjour ! Je suis SenStat-AI. Je peux analyser les données statistiques des régions du Sénégal (2020-2024). Que souhaitez-vous savoir ?</p>
+                                <small class="text-muted mt-2 d-block">Ex: Quel est le taux d'accès à internet à Dakar en 2023 ?</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="card-footer bg-body border-top p-3 flex-shrink-0">
+                        <form id="chat-form" class="position-relative">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" id="question-input" class="form-control form-control-lg border-2 rounded-pill ps-4 shadow-sm" placeholder="Posez votre question..." autocomplete="off" required>
+                                <button type="submit" id="send-button" class="btn btn-primary rounded-pill px-4 ms-2 shadow-sm d-flex align-items-center">
+                                    <span class="d-none d-sm-inline me-2 fw-semibold">Envoyer</span>
+                                    <i class="bi bi-send-fill"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Panel (Suggestions & Context) -->
+            <div class="col-lg-4 d-none d-lg-block">
+                <div class="card shadow-sm border-0 rounded-4 h-100">
+                    <div class="card-header bg-transparent border-bottom-0 pt-4 pb-2">
+                        <h5 class="card-title fw-bold mb-0">
+                            <i class="bi bi-lightbulb-fill text-warning me-2"></i>Suggestions
+                        </h5>
+                    </div>
+                    <div class="card-body pt-0 overflow-auto custom-scrollbar">
+                        <p class="text-muted small mb-3">Cliquez sur une question pour l'envoyer directement.</p>
+                        <div class="d-grid gap-2" id="suggestion-container">
+                            <button class="suggestion-btn btn btn-outline-primary text-start rounded-3 py-2 px-3 transition-hover shadow-sm" type="button">
+                                <i class="bi bi-arrow-right-short me-1"></i>Quelle est la région la plus peuplée en 2024 ?
+                            </button>
+                            <button class="suggestion-btn btn btn-outline-primary text-start rounded-3 py-2 px-3 transition-hover shadow-sm" type="button">
+                                <i class="bi bi-arrow-right-short me-1"></i>Compare le taux de chômage entre Dakar et Thiès en 2022
+                            </button>
+                            <button class="suggestion-btn btn btn-outline-primary text-start rounded-3 py-2 px-3 transition-hover shadow-sm" type="button">
+                                <i class="bi bi-arrow-right-short me-1"></i>Évolution de la production céréalière à Diourbel
+                            </button>
+                            <button class="suggestion-btn btn btn-outline-primary text-start rounded-3 py-2 px-3 transition-hover shadow-sm" type="button">
+                                <i class="bi bi-arrow-right-short me-1"></i>Moyenne du taux de pauvreté au Sénégal en 2021
+                            </button>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="bg-primary bg-opacity-10 rounded-4 p-3 border border-primary border-opacity-25">
+                            <h6 class="fw-bold text-primary mb-2">
+                                <i class="bi bi-info-circle-fill me-2"></i>À propos
+                            </h6>
+                            <p class="small text-muted mb-0">
+                                Jeu de données <strong>fictif</strong> de 14 régions du Sénégal (2020-2024). Prototype à but pédagogique limitant les outils complexes au profit d'une exécution stricte (8 Go RAM, pas de base in-memory externe).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template for Bot Message (used in JS) -->
+    <template id="bot-message-template">
+        <div class="message bot-message d-flex mb-4 opacity-0 slide-in-bottom">
+            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-3 shadow-sm" style="width: 40px; height: 40px;">
+                <i class="bi bi-robot fs-5"></i>
+            </div>
+            <div class="message-content flex-grow-1 overflow-hidden" style="max-width: 85%;">
+                <!-- Intent Block -->
+                <div class="intent-block mb-2 badge bg-info bg-opacity-10 text-info border border-info rounded-3 p-2 text-start d-none w-100 shadow-sm text-wrap">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-search me-2 mt-1"></i>
+                        <span class="small fw-semibold intent-text"></span>
+                    </div>
+                </div>
+                
+                <!-- Text Answer -->
+                <div class="answer-block bg-body-secondary p-3 rounded-4 rounded-top-left-0 shadow-sm d-inline-block mw-100 mb-2">
+                    <p class="mb-0 answer-text"></p>
+                </div>
+
+                <!-- Chart Container -->
+                <div class="chart-block d-none mb-3 bg-body p-3 rounded-4 border shadow-sm w-100" style="height: 300px; position: relative;">
+                    <canvas class="chart-canvas"></canvas>
+                </div>
+
+                <!-- Table Container -->
+                <div class="table-block d-none table-responsive rounded-3 border shadow-sm mb-2 w-100">
+                    <table class="table table-striped table-hover mb-0 align-middle small">
+                        <thead class="table-light">
+                            <tr class="table-headers"></tr>
+                        </thead>
+                        <tbody class="table-body"></tbody>
+                    </table>
+                </div>
+                
+                <!-- Metadata -->
+                <div class="metadata-block d-none text-end mt-1">
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border">
+                        <i class="bi bi-database me-1"></i> <span class="rows-used"></span> lignes
+                    </span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template for User Message (used in JS) -->
+    <template id="user-message-template">
+        <div class="message user-message d-flex mb-4 flex-row-reverse opacity-0 slide-in-bottom">
+            <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ms-3 shadow-sm" style="width: 40px; height: 40px;">
+                <i class="bi bi-person-fill fs-5"></i>
+            </div>
+            <div class="message-content bg-primary text-white p-3 rounded-4 rounded-top-right-0 shadow-sm d-inline-block text-start" style="max-width: 85%;">
+                <p class="mb-0 user-text"></p>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template for Loading Indicator -->
+    <template id="loading-template">
+        <div class="message loading-message d-flex mb-4">
+            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-3 shadow-sm" style="width: 40px; height: 40px;">
+                <i class="bi bi-robot fs-5"></i>
+            </div>
+            <div class="message-content bg-body-secondary p-3 rounded-4 rounded-top-left-0 shadow-sm d-flex align-items-center">
+                <div class="typing-indicator d-flex gap-1 align-items-center">
+                    <span class="dot rounded-circle bg-secondary" style="width: 8px; height: 8px;"></span>
+                    <span class="dot rounded-circle bg-secondary" style="width: 8px; height: 8px;"></span>
+                    <span class="dot rounded-circle bg-secondary" style="width: 8px; height: 8px;"></span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{% static 'js/chat.js' %}"></script>
+</body>
+</html>
