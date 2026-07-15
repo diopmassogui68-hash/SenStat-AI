@@ -92,11 +92,14 @@ class StatistiqueService:
             data = list(qs.values('region', 'annee', indicator).order_by('region', 'annee'))
             table_data = data
             if data:
-                premier = data[0]
-                answer = (
-                    f"{_get_label(indicator).capitalize()} pour {premier['region']} "
-                    f"en {premier['annee']} est de {premier[indicator]}."
-                )
+                if len(data) == 1:
+                    premier = data[0]
+                    answer = (
+                        f"{_get_label(indicator).capitalize()} pour {premier['region']} "
+                        f"en {premier['annee']} est de {premier[indicator]}."
+                    )
+                else:
+                    answer = f"Voici les données concernant {label} : vous pouvez consulter les détails dans le tableau et le graphique."
                 chart_data = {
                     "type": intent.chart_type,
                     "labels": [f"{d['region']} ({d['annee']})" for d in data],
@@ -112,13 +115,14 @@ class StatistiqueService:
             if not data:
                 answer = "Aucune donnée trouvée pour cette comparaison."
             else:
-                regions_txt = ", ".join(sorted(set(d['region'] for d in data)))
-                
-                # Construire une réponse détaillée
-                details = []
-                for d in data:
-                    details.append(f"{d['region']} ({d['annee']}) : {d[indicator]}")
-                details_txt = "<br>- " + "<br>- ".join(details)
+                regions_found = sorted(set(d['region'] for d in data))
+                if len(regions_found) > 3:
+                    regions_txt = "plusieurs régions"
+                    details_txt = "Consultez le graphique pour voir la comparaison complète."
+                else:
+                    regions_txt = ", ".join(regions_found)
+                    details = [f"{d['region']} ({d['annee']}) : {d[indicator]}" for d in data]
+                    details_txt = "<br>- " + "<br>- ".join(details)
                 
                 answer = f"Comparaison de {label} entre {regions_txt} : {details_txt}"
                 labels = sorted(set(d['annee'] for d in data))
@@ -148,10 +152,13 @@ class StatistiqueService:
             if not data:
                 answer = "Aucune donnée trouvée pour l'évolution demandée."
             else:
-                regions_txt = ", ".join(sorted(set(d['region'] for d in data)))
-                answer = f"Voici l'évolution de {label} de {intent.start_year} à {intent.end_year} pour {regions_txt}. Les détails sont disponibles dans le tableau et le graphique ci-contre."
-                labels = sorted(set(d['annee'] for d in data))
                 regions_found = sorted(set(d['region'] for d in data))
+                if len(regions_found) > 3:
+                    regions_txt = "plusieurs régions"
+                else:
+                    regions_txt = ", ".join(regions_found)
+                answer = f"Voici l'évolution de {label} pour {regions_txt}. Les détails sont disponibles dans le tableau et le graphique ci-contre."
+                labels = sorted(set(d['annee'] for d in data))
                 datasets = []
                 for region in regions_found:
                     region_data = [
