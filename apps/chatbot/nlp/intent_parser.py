@@ -36,7 +36,7 @@ def parse_question(question: str) -> QueryIntent:
     if start_year and end_year and start_year != end_year and operation == "value":
         operation = "trend"
         
-    if "comparer" in norm_text and len(regions) < 2:
+    if operation == "compare" and len(regions) < 2:
         raise AmbiguousQueryError("Vous souhaitez comparer, mais vous n'avez mentionné qu'une seule région. Lesquelles voulez-vous comparer ?")
 
     limit = extract_limit(question)

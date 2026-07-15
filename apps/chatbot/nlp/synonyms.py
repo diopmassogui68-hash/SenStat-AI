@@ -19,7 +19,7 @@ INDICATOR_SYNONYMS = {
 
 OPERATION_SYNONYMS = {
     "trend": ["evolution", "tendance", "historique", "au fil du temps", "depuis", "annees"],
-    "compare": ["comparer", "difference", "contre", "vs", "versus"],
+    "compare": ["comparer", "compare", "difference", "contre", "vs", "versus"],
     "ranking": ["classement", "top", "meilleurs", "pires", "plus grand", "plus petit"],
     "sum": ["somme", "total", "cumul"],
     "average": ["moyenne", "en moyenne"],
