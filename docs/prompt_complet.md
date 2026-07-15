@@ -68,7 +68,7 @@ Le front doit afficher correctement la réponse même si `chart` est `null`.
 5. Limiter les dépendances externes — privilégier ce qui est déjà dans la stack imposée.
 6. Préférer les fonctionnalités natives de Django lorsque c'est possible.
 7. S'il existe plusieurs solutions valables, expliquer brièvement pourquoi celle retenue est la meilleure dans ce contexte précis (lab noté, 8 Go RAM, délai court).
-8. Toute fonctionnalité bonus ajoutée doit justify sa valeur pour la démonstration finale ou pour un critère du barème — sinon elle est écartée.
+8. Toute fonctionnalité bonus ajoutée doit justifier sa valeur pour la démonstration finale ou pour un critère du barème — sinon elle est écartée.
 9. Ne jamais sacrifier la lisibilité ou la maintenabilité pour gagner quelques lignes de code.
 
 ## Règles de livraison
@@ -249,3 +249,6 @@ Ces ajouts n'apparaissent pas dans le barème officiel mais sont soit suggérés
 - Export PDF/Excel complet (le CSV suffit à démontrer la compétence)
 
 Signale-moi clairement, à chaque étape, si tu introduis un élément bonus, pour que je sache que ce n'est pas un critère noté obligatoire.
+
+## Démarrage
+Commence par l'étape 1 uniquement, et attends ma validation avant de passer à la suivante.
