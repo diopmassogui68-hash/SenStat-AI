@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenStat AI</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        .chat-container { max-height: 500px; overflow-y: auto; }
+        .message { margin-bottom: 1rem; padding: 10px; border-radius: 8px; }
+        .message-user { background-color: #0d6efd; color: white; text-align: right; }
+        .message-bot { background-color: #f8f9fa; border: 1px solid #dee2e6; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Colonne Chat -->
+        <div class="col-md-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Assistant SenStat AI</h5>
+                </div>
+                <div class="card-body chat-container d-flex flex-column" id="chatHistory">
+                    <div class="message message-bot">
+                        Bonjour ! Posez-moi vos questions sur les statistiques régionales du Sénégal (2020-2024).
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <form id="questionForm">
+                        <div class="input-group">
+                            <input type="text" id="questionInput" class="form-control" placeholder="Posez une question..." required autocomplete="off">
+                            <button class="btn btn-primary" type="submit" id="sendBtn">Envoyer</button>
+                        </div>
+                    </form>
+                    <div id="loadingIndicator" class="text-center d-none mt-2">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <span class="small text-muted">Analyse en cours...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne Résultats -->
+        <div class="col-md-7">
+            <!-- Zone Graphique -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Visualisation</h6>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="resultChart"></canvas>
+                        <p id="emptyChartMsg" class="text-center text-muted position-absolute top-50 w-100 translate-middle">Le graphique s'affichera ici</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone Tableau -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-muted">Données Brutes</h6>
+                    <div class="table-responsive" style="max-height: 250px;">
+                        <table class="table table-bordered table-striped table-sm" id="resultTable">
+                            <thead class="table-light" id="tableHead">
+                                <tr>
+                                    <th>Région</th>
+                                    <th>Année</th>
+                                    <th>Valeur</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr><td colspan="3" class="text-center text-muted">En attente de données...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js verrouillé -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<!-- Logic Frontend Serigne Mbacke Faye -->
+<script src="{% static 'js/chat.js' %}"></script>
+</body>
+</html>
