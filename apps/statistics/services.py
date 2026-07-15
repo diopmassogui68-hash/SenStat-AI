@@ -74,7 +74,8 @@ class StatistiqueService:
         qs = StatistiqueRegionale.objects.all()
 
         # --- Filtrage par région et année ---
-        if intent.regions:
+        # On ignore le filtre région si on cherche un classement (Top N) au niveau national
+        if intent.regions and intent.operation != "ranking":
             qs = qs.filter(region__in=intent.regions)
 
         if intent.start_year and intent.end_year:
