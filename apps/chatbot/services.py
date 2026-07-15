@@ -1,5 +1,6 @@
 from typing import Dict, Any
 from apps.chatbot.nlp.intent_parser import IntentParser
+from apps.chatbot.ai.gemini_client import GeminiClient
 from apps.statistics.services import StatistiqueService
 
 class QuestionService:
@@ -14,8 +15,15 @@ class QuestionService:
         Prend la question brute, extrait l'intention, l'exécute, et formate la réponse
         selon le contrat JSON exact exigé par le frontend.
         """
-        # 1. Parsing NLP
-        intent = IntentParser.parse(question_text)
+        # 1. Parsing NLP (Gemini en priorité, déterministe en repli)
+        intent = None
+        gemini_client = GeminiClient()
+        if gemini_client.is_configured:
+            intent = gemini_client.analyze_intent(question_text)
+            
+        # Repli déterministe automatique et silencieux
+        if not intent:
+            intent = IntentParser.parse(question_text)
         
         # 2. Gestion des cas d'erreur ou hors périmètre
         if intent.is_out_of_scope:
@@ -67,7 +75,8 @@ class QuestionService:
                 "regions": intent.regions,
                 "start_year": intent.start_year,
                 "end_year": intent.end_year,
-                "operation": intent.operation
+                "operation": intent.operation,
+                "ai_generated": intent.is_ai_generated
             }
             
         return {

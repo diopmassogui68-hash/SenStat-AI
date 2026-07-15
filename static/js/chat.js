@@ -78,6 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const regionsStr = intent.regions.length > 0 ? intent.regions.join(', ') : 'Toutes';
                     const yearsStr = intent.start_year ? (intent.start_year === intent.end_year ? intent.start_year : `${intent.start_year} - ${intent.end_year}`) : 'Non spécifié';
                     
+                    const aiBadge = intent.ai_generated 
+                        ? '<span class="badge bg-primary ms-2"><i class="bi bi-stars"></i> Gemini AI</span>'
+                        : '<span class="badge bg-secondary ms-2"><i class="bi bi-gear"></i> Déterministe</span>';
+                        
                     msgHtml += `
                         <div class="intent-details mt-2">
                             <strong><i class="bi bi-info-circle me-1"></i>Analyse :</strong> 
@@ -85,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             Région(s): <em>${regionsStr}</em> | 
                             Année(s): <em>${yearsStr}</em> | 
                             Action: <em>${intent.operation}</em>
+                            ${aiBadge}
                         </div>
                     `;
                 }

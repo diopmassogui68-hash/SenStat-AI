@@ -16,6 +16,7 @@ class QueryIntent:
     is_ambiguous: bool = False
     ambiguity_reason: Optional[str] = None
     is_out_of_scope: bool = False
+    is_ai_generated: bool = False
     
     def to_dict(self):
         return {
