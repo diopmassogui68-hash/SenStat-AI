@@ -8,6 +8,7 @@ Note : les synonymes sont stockés SANS accents pour être comparés
 au texte normalisé par normalize_text().
 """
 import unicodedata
+import difflib
 
 
 def normalize_text(text: str) -> str:
@@ -103,10 +104,25 @@ def find_indicator(normalized_text: str) -> str | None:
     Returns:
         Le nom du champ Django correspondant, ou None si aucun indicateur détecté.
     """
+    # 1. Correspondance exacte
     for indicator, synonyms in INDICATOR_SYNONYMS.items():
         for syn in synonyms:
             if syn in normalized_text:
                 return indicator
+                
+    # 2. Correspondance floue par mot (tolérance aux fautes d'orthographe)
+    words = normalized_text.split()
+    for word in words:
+        if len(word) >= 5:  # Seulement les mots significatifs
+            for indicator, synonyms in INDICATOR_SYNONYMS.items():
+                for syn in synonyms:
+                    for syn_word in syn.split():
+                        if len(syn_word) >= 5:
+                            # Calcul de similarité
+                            ratio = difflib.SequenceMatcher(None, word, syn_word).ratio()
+                            if ratio > 0.8:
+                                return indicator
+                                
     return None
 
 
@@ -121,8 +137,22 @@ def find_operation(normalized_text: str) -> str:
     Returns:
         Le code de l'opération (value, compare, trend, ranking, sum, average).
     """
+    # 1. Correspondance exacte
     for operation, synonyms in OPERATION_SYNONYMS.items():
         for syn in synonyms:
             if syn in normalized_text:
                 return operation
+                
+    # 2. Correspondance floue
+    words = normalized_text.split()
+    for word in words:
+        if len(word) >= 5:
+            for operation, synonyms in OPERATION_SYNONYMS.items():
+                for syn in synonyms:
+                    for syn_word in syn.split():
+                        if len(syn_word) >= 5:
+                            ratio = difflib.SequenceMatcher(None, word, syn_word).ratio()
+                            if ratio > 0.8:
+                                return operation
+                                
     return "value"

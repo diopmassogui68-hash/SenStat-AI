@@ -6,6 +6,7 @@ du texte brut de la question utilisateur.
 """
 import re
 from typing import Optional
+import difflib
 
 from .synonyms import normalize_text, REGIONS_SENEGAL
 
@@ -52,9 +53,24 @@ def extract_regions(normalized_text: str) -> list[str]:
         Liste des noms de régions trouvés (noms officiels avec casse correcte).
     """
     found_regions: list[str] = []
+    
+    # 1. Correspondance exacte (comprend les sous-chaînes)
     for region in REGIONS_SENEGAL:
         if normalize_text(region) in normalized_text:
             found_regions.append(region)
+            
+    # 2. Correspondance floue (tolérance aux fautes d'orthographe)
+    words = normalized_text.split()
+    normalized_regions = {normalize_text(r): r for r in REGIONS_SENEGAL}
+    
+    for word in words:
+        if len(word) >= 4:  # Ignorer les petits mots de liaison
+            matches = difflib.get_close_matches(word, normalized_regions.keys(), n=1, cutoff=0.75)
+            if matches:
+                real_region = normalized_regions[matches[0]]
+                if real_region not in found_regions:
+                    found_regions.append(real_region)
+                    
     return found_regions
 
 
