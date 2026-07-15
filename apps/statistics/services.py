@@ -112,7 +112,14 @@ class StatistiqueService:
                 answer = "Aucune donnée trouvée pour cette comparaison."
             else:
                 regions_txt = ", ".join(sorted(set(d['region'] for d in data)))
-                answer = f"Comparaison de {label} entre {regions_txt}."
+                
+                # Construire une réponse détaillée
+                details = []
+                for d in data:
+                    details.append(f"{d['region']} ({d['annee']}) : {d[indicator]}")
+                details_txt = "<br>- " + "<br>- ".join(details)
+                
+                answer = f"Comparaison de {label} entre {regions_txt} : {details_txt}"
                 labels = sorted(set(d['annee'] for d in data))
                 regions_found = sorted(set(d['region'] for d in data))
                 datasets = []
@@ -140,9 +147,8 @@ class StatistiqueService:
             if not data:
                 answer = "Aucune donnée trouvée pour l'évolution demandée."
             else:
-                answer = (
-                    f"Évolution de {label} de {intent.start_year} à {intent.end_year}."
-                )
+                regions_txt = ", ".join(sorted(set(d['region'] for d in data)))
+                answer = f"Voici l'évolution de {label} de {intent.start_year} à {intent.end_year} pour {regions_txt}. Les détails sont disponibles dans le tableau et le graphique ci-contre."
                 labels = sorted(set(d['annee'] for d in data))
                 regions_found = sorted(set(d['region'] for d in data))
                 datasets = []
@@ -177,7 +183,11 @@ class StatistiqueService:
             if not data:
                 answer = "Aucune donnée disponible pour ce classement."
             else:
-                answer = f"Top {limit} pour {label}."
+                details = []
+                for i, d in enumerate(data, 1):
+                    details.append(f"{i}. {d['region']} ({d[indicator]})")
+                details_txt = "<br>" + "<br>".join(details)
+                answer = f"Top {limit} pour {label} en {data[0]['annee']} : {details_txt}"
                 chart_data = {
                     "type": intent.chart_type,
                     "labels": [d['region'] for d in data],
@@ -194,7 +204,11 @@ class StatistiqueService:
             if not data:
                 answer = "Aucune donnée disponible pour cette répartition."
             else:
-                answer = f"Répartition de {label} par région."
+                details = []
+                for d in data:
+                    details.append(f"{d['region']} : {d[indicator]}")
+                details_txt = "<br>- " + "<br>- ".join(details)
+                answer = f"Répartition de {label} par région en {data[0]['annee']} : {details_txt}"
                 chart_data = {
                     "type": intent.chart_type,
                     "labels": [d['region'] for d in data],
