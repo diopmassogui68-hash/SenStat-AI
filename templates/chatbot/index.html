@@ -60,20 +60,18 @@
                     <span class="ms-2 small text-muted">Analyse en cours...</span>
                 </div>
 
-                <!-- Input Flottant -->
-                <div class="input-area">
-                    <form id="questionForm">
-                        <div class="position-relative w-100">
-                            <input type="text" id="questionInput" class="form-control w-100 pe-5" placeholder="Ex: Compare la population de Dakar et Thiès" required autocomplete="off">
-                            <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-5 text-secondary" id="voiceBtn" title="Parler">
-                                <i class="bi bi-mic-fill fs-5"></i>
-                            </button>
-                            <button type="submit" class="btn-send" id="sendBtn">
-                                <i class="bi bi-arrow-up-short fs-4"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <!-- Zone de saisie -->
+                <form id="questionForm" class="mt-auto">
+                    <div class="input-group input-group-lg shadow-sm">
+                        <input type="text" id="questionInput" class="form-control" placeholder="Ex: Compare la population de Dakar et Thiès" required autocomplete="off" style="border-right: none;">
+                        <button class="btn btn-light border" type="button" id="voiceBtn" title="Parler" style="border-left: none; background: white;">
+                            <i class="bi bi-mic-fill text-secondary"></i>
+                        </button>
+                        <button class="btn btn-primary px-4" type="submit" id="sendBtn" title="Envoyer">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div>
+                </form>
 
                 <!-- Suggestions (Bonus) -->
                 <div class="mt-2 text-center" id="suggestionsContainer">
