@@ -4,6 +4,27 @@
  */
 
 let chartInstance = null;
+let mapInstance = null;
+let mapLayerGroup = null;
+let chatHistoryData = []; // Bonus: Historique de session client
+
+// Coordonnées approximatives des 14 capitales régionales
+const regionCoords = {
+    'Dakar': [14.6928, -17.4467],
+    'Thiès': [14.7910, -16.9248],
+    'Diourbel': [14.6533, -16.2300],
+    'Kaolack': [14.1333, -16.2533],
+    'Fatick': [14.3333, -16.4167],
+    'Kaffrine': [14.1059, -15.5508],
+    'Tambacounda': [13.7689, -13.6672],
+    'Kédougou': [12.5528, -12.1803],
+    'Kolda': [12.8833, -14.9500],
+    'Sédhiou': [12.7081, -15.5569],
+    'Ziguinchor': [12.5833, -16.2733],
+    'Saint-Louis': [16.0306, -16.4817],
+    'Louga': [15.6167, -16.2167],
+    'Matam': [15.6559, -13.2533]
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('questionForm');
@@ -16,6 +37,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
+    
+    // Nouveaux éléments Map/Chart toggle
+    const btnShowChart = document.getElementById('btnShowChart');
+    const btnShowMap = document.getElementById('btnShowMap');
+    const chartContainer = document.getElementById('chartContainer');
+    const mapContainer = document.getElementById('mapContainer');
+    
+    // Initialiser la carte Leaflet
+    initMap();
+    
+    // Toggle Event Listeners
+    btnShowChart.addEventListener('click', () => {
+        btnShowChart.classList.add('active');
+        btnShowMap.classList.remove('active');
+        chartContainer.classList.remove('d-none');
+        mapContainer.classList.add('d-none');
+    });
+    
+    btnShowMap.addEventListener('click', () => {
+        btnShowMap.classList.add('active');
+        btnShowChart.classList.remove('active');
+        mapContainer.classList.remove('d-none');
+        chartContainer.classList.add('d-none');
+        // Obligatoire pour Leaflet après un display: none
+        setTimeout(() => mapInstance.invalidateSize(), 100);
+    });
     
     // Initialisation du thème sombre (Bonus Sanor)
     const currentTheme = localStorage.getItem('theme') || 'light';
@@ -87,6 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Mettre à jour le graphique (Destruction propre)
                 updateChart(data.chart);
+                
+                // Mettre à jour la carte Leaflet
+                updateMap(data.table, data.metadata?.intent_debug?.indicator);
                 
                 // Activer l'export CSV si données
                 if(data.table && data.table.length > 0) {
@@ -247,6 +297,64 @@ document.addEventListener('DOMContentLoaded', () => {
                         grid: { color: gridColor, drawBorder: false } 
                     }
                 }
+            }
+        });
+    }
+
+    function initMap() {
+        // Centré sur le Sénégal
+        mapInstance = L.map('senegalMap').setView([14.4974, -14.4524], 6);
+        
+        // Ajout des tuiles (Fond de carte OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance);
+        
+        // Créer un calque pour nos marqueurs dynamiques
+        mapLayerGroup = L.layerGroup().addTo(mapInstance);
+    }
+
+    function updateMap(tableData, indicatorName) {
+        if (!mapInstance || !mapLayerGroup) return;
+        
+        // Vider les anciens marqueurs
+        mapLayerGroup.clearLayers();
+        
+        if (!tableData || tableData.length === 0) return;
+        
+        // Si c'est une somme ou moyenne sans dimension géographique, on passe
+        if (tableData.length === 1 && !tableData[0].region) return;
+
+        // Trouver la valeur max pour calculer la taille des cercles
+        const values = tableData.map(row => {
+            const keys = Object.keys(row).filter(k => k !== 'region' && k !== 'annee');
+            return row[keys[0]];
+        }).filter(v => typeof v === 'number');
+        
+        const maxVal = values.length > 0 ? Math.max(...values) : 1;
+
+        tableData.forEach(row => {
+            const rName = row.region;
+            if (regionCoords[rName]) {
+                const keys = Object.keys(row).filter(k => k !== 'region' && k !== 'annee');
+                const val = row[keys[0]];
+                
+                // Calculer le rayon relatif
+                const isNumber = typeof val === 'number';
+                const radius = isNumber ? Math.max(5000, (val / maxVal) * 30000) : 10000;
+                
+                const circle = L.circle(regionCoords[rName], {
+                    color: '#0d6efd',
+                    fillColor: '#0d6efd',
+                    fillOpacity: 0.5,
+                    radius: radius
+                });
+                
+                const displayVal = (isNumber && !Number.isInteger(val)) ? val.toFixed(2) : val;
+                const label = indicatorName ? indicatorName.replace('_pct', ' (%)').replace('_', ' ') : 'Valeur';
+                
+                circle.bindPopup(`<strong>${rName}</strong><br>${label}: ${displayVal}`);
+                circle.addTo(mapLayerGroup);
             }
         });
     }
