@@ -50,20 +50,31 @@ class QuestionService:
             answer=answer,
             table=db_result['table'],
             chart=chart_data,
-            rows_used=len(db_result['table'])
+            rows_used=len(db_result['table']),
+            intent=intent
         )
         
     @classmethod
-    def _build_response(cls, answer: str, table: list, chart: dict, rows_used: int) -> Dict[str, Any]:
+    def _build_response(cls, answer: str, table: list, chart: dict, rows_used: int, intent=None) -> Dict[str, Any]:
         """Garantit le format exact du contrat JSON."""
+        metadata = {
+            "fictitious": True,
+            "rows_used": rows_used
+        }
+        if intent:
+            metadata["intent_debug"] = {
+                "indicator": intent.indicator,
+                "regions": intent.regions,
+                "start_year": intent.start_year,
+                "end_year": intent.end_year,
+                "operation": intent.operation
+            }
+            
         return {
             "answer": answer,
             "table": table,
             "chart": chart,
-            "metadata": {
-                "fictitious": True,
-                "rows_used": rows_used
-            }
+            "metadata": metadata
         }
 
     @classmethod

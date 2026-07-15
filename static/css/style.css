@@ -1,0 +1,141 @@
+/* 
+ * SenStat AI - Styles Personnalisés 
+ * Auteur: Sanor Mangane (Habillage & UX)
+ */
+
+ :root {
+    --bg-color: #f8f9fa;
+    --panel-bg: #ffffff;
+    --text-color: #212529;
+    --border-color: #dee2e6;
+    --chat-bot-bg: rgba(13, 110, 253, 0.1);
+    --chat-user-bg: #f1f3f5;
+    --text-muted: #6c757d;
+}
+
+[data-bs-theme="dark"] {
+    --bg-color: #212529;
+    --panel-bg: #2c3034;
+    --text-color: #f8f9fa;
+    --border-color: #495057;
+    --chat-bot-bg: rgba(13, 110, 253, 0.2);
+    --chat-user-bg: #343a40;
+    --text-muted: #adb5bd;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    background-color: var(--panel-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.main-container {
+    flex-grow: 1;
+    padding-bottom: 20px;
+    height: calc(100vh - 80px); /* Ajustement pour la navbar */
+}
+
+/* Panneau de Chat */
+.chat-panel {
+    background-color: var(--panel-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.chat-history {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
+}
+
+/* Bulles de message */
+.msg-bubble {
+    max-width: 90%;
+    word-wrap: break-word;
+    font-size: 0.95rem;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.bot-msg {
+    align-self: flex-start;
+    background-color: var(--chat-bot-bg) !important;
+    border-left: 3px solid #0d6efd;
+    color: var(--text-color);
+}
+
+.user-msg {
+    align-self: flex-end;
+    background-color: var(--chat-user-bg) !important;
+    border-right: 3px solid #6c757d;
+    color: var(--text-color);
+    text-align: right;
+}
+
+.intent-details {
+    font-size: 0.8rem;
+    background-color: rgba(0,0,0,0.05);
+    padding: 5px;
+    border-radius: 4px;
+    margin-top: 8px;
+    border-left: 2px solid #198754;
+}
+
+[data-bs-theme="dark"] .intent-details {
+    background-color: rgba(255,255,255,0.05);
+}
+
+/* Badges de suggestion */
+.badge-suggestion {
+    transition: transform 0.2s, opacity 0.2s;
+}
+.badge-suggestion:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Cartes (Graphique et Tableau) */
+.card {
+    background-color: var(--panel-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+.table {
+    color: var(--text-color);
+}
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    color: var(--text-color);
+}
+
+/* Utilitaires */
+.text-light-gray {
+    color: var(--border-color);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar personnalisée pour la zone de chat */
+.chat-history::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-history::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat-history::-webkit-scrollbar-thumb {
+    background-color: #adb5bd;
+    border-radius: 10px;
+}

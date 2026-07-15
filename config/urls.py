@@ -1,8 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
+    # Frontend
+    path('', TemplateView.as_view(template_name='chatbot/index.html'), name='home'),
+    
     path('admin/', admin.site.urls),
     
     # API endpoints
