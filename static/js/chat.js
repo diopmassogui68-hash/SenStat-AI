@@ -280,9 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loadingNode = appendLoading();
 
         try {
-            // TODO: Replace with actual fetch call to /api/question/ when backend is ready
-            /*
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
             const res = await fetch('/api/question/', {
                 method: 'POST',
                 headers: {
@@ -291,10 +289,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({ text })
             });
+            
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
             const data = await res.json();
-            */
-
-            const data = await generateMockResponse(text);
             
             // 3. Render Response
             renderBotResponse(data, loadingNode);
