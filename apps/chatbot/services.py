@@ -1,4 +1,5 @@
 from apps.chatbot.nlp.intent_parser import parse_question, AmbiguousQueryError, OutOfScopeError, IntentParsingError
+from apps.chatbot.ai.gemini_client import call_gemini
 from apps.statistics.services import StatistiqueService
 import logging
 
@@ -7,11 +8,19 @@ logger = logging.getLogger(__name__)
 class QuestionService:
     @staticmethod
     def process_question(question_text: str) -> dict:
-        metadata = {"fictitious": True, "rows_used": 0}
+        metadata = {"fictitious": True, "rows_used": 0, "ai_used": False}
         
         try:
-            # 1. Analyse NLP
-            intent = parse_question(question_text)
+            # 1. Tentative IA Générative (Bonus optionnel)
+            intent = call_gemini(question_text)
+            
+            if intent:
+                metadata["ai_used"] = True
+                logger.info("Intention extraite par Gemini avec succès.")
+            else:
+                # 2. Repli déterministe (Obligatoire)
+                logger.info("Utilisation du NLP déterministe de repli.")
+                intent = parse_question(question_text)
             
             # 2. Requête ORM sécurisée
             answer, table_data, chart_data = StatistiqueService.execute_query(intent)
